@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","3430","test_create_user","","2026-02-10","passed","2026-02-10","TestStellarBurgersAPI","tests","",""
+"","1044","test_create_order","","2026-02-10","failed","2026-02-10","TestStellarBurgersAPI","tests","",""
+"","2081","test_user_login","","2026-02-10","passed","2026-02-10","TestStellarBurgersAPI","tests","",""
