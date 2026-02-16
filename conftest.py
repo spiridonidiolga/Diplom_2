@@ -1,7 +1,10 @@
 import pytest
-import requests
 from datetime import datetime
-from config import BASE_URL
+from config import ApiConfig
+BASE_URL = ApiConfig.BASE_URL
+
+
+from helpers import ApiHelper
 
 @pytest.fixture(scope="session")
 def base_url():
@@ -16,7 +19,7 @@ def registered_user(base_url):
         "name": "Test User"
     }
     
-    response = requests.post(f"{base_url}/auth/register", json=register_data)
+    response = ApiHelper.register_user(**register_data)
     assert response.status_code == 200
     data = response.json()
     
@@ -28,15 +31,7 @@ def registered_user(base_url):
         }
     }
     
-    
-    requests.delete(
-        f"{base_url}/auth/user",
-        headers={"Authorization": f"Bearer {data['accessToken']}"}
-    )
-
-@pytest.fixture
-def unauthorized_headers():
-    return {}
+    ApiHelper.delete_user(headers={"Authorization": f"Bearer {data['accessToken']}"})
 
 @pytest.fixture
 def valid_ingredients():
