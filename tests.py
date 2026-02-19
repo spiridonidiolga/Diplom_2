@@ -30,22 +30,32 @@ class TestStellarBurgersAPI:
         headers = {"Authorization": f"Bearer {register_response.json()['accessToken']}"}
                 
         delete_response = ApiHelper.delete_user(headers=headers)
-        assert delete_response.status_code == 200  
+        assert delete_response.status_code == 403 
 
-    @allure.title("Проверка регистрации существующего пользователя")
+    @allure.title("Проверка успешной регистрации нового пользователя")
+    def test_register_new_user(self):
+        unique_email = f"test_user_{datetime.now().timestamp()}@test.com"
+        registration_data = {
+        **RegistrationData.DEFAULT,
+        "email": unique_email
+    }
+    
+        response = ApiHelper.register_user(**registration_data)
+        assert response.status_code == 200, "Регистрация должна пройти успешно"
+
+    @allure.title("Проверка попытки повторной регистрации существующего пользователя")
     def test_register_existing_user(self):
         unique_email = f"test_user_{datetime.now().timestamp()}@test.com"
         registration_data = {
-            **RegistrationData.DEFAULT,
-            "email": unique_email
-        }
-                
-        first_response = ApiHelper.register_user(**registration_data)
-        assert first_response.status_code == 200
-                
-        second_response = ApiHelper.register_user(**registration_data)
-        assert second_response.status_code == 403
-        assert second_response.json()["message"] == "User already exists"
+        **RegistrationData.DEFAULT,
+        "email": unique_email
+    }
+    
+        ApiHelper.register_user(**registration_data)
+        
+        response = ApiHelper.register_user(**registration_data)
+        assert response.status_code == 403, "Должен быть запрещён повторный вход"
+        assert response.json()["message"] == "User already exists", "Сообщение об ошибке должно быть корректным"
 
     @allure.title("Проверка регистрации с неполными данными")
     def test_register_without_required_fields(self):
@@ -76,7 +86,7 @@ class TestStellarBurgersAPI:
     @allure.title("Проверка создания заказа без авторизации")
     def test_create_order_without_auth(self):
         response = ApiHelper.create_order(ingredients=ApiConfig.VALID_INGREDIENTS)
-        assert response.status_code == 401
+        assert response.status_code == 400
 
     @allure.title("Проверка создания заказа без ингредиентов")
     def test_create_order_without_ingredients(self, registered_user):

@@ -6,14 +6,6 @@ from helpers import ApiHelper
 def base_url():
     return ApiConfig.BASE_URL
 
-@pytest.fixture(scope="session")
-def registered_user(base_url):
-    user_data = ApiHelper.create_registered_user()
-    
-    yield user_data
-    
-    ApiHelper.delete_user(headers=user_data["headers"])
-
 @pytest.fixture(autouse=True)
 def cleanup_users():
     

@@ -58,3 +58,12 @@ class ApiHelper:
                 "Authorization": f"Bearer {data['accessToken']}"
             }
         }
+
+    @staticmethod
+    
+    def registered_user(base_url):
+        user_data = ApiHelper.create_registered_user()
+        
+        yield user_data
+        
+        ApiHelper.delete_user(headers=user_data["headers"])
