@@ -4,7 +4,7 @@ from config import ApiConfig, RegistrationData, InvalidRegistrationData
 from helpers import ApiHelper
 import allure
 
-class TestStellarBurgersAPI:
+class TestUserRegistration:
     
     @allure.title("Регистрация нового пользователя")
     def test_register_new_user(self):
@@ -32,24 +32,13 @@ class TestStellarBurgersAPI:
         delete_response = ApiHelper.delete_user(headers=headers)
         assert delete_response.status_code == 403 
 
-    @allure.title("Проверка успешной регистрации нового пользователя")
-    def test_register_new_user(self):
-        unique_email = f"test_user_{datetime.now().timestamp()}@test.com"
-        registration_data = {
-        **RegistrationData.DEFAULT,
-        "email": unique_email
-    }
-    
-        response = ApiHelper.register_user(**registration_data)
-        assert response.status_code == 200, "Регистрация должна пройти успешно"
-
     @allure.title("Проверка попытки повторной регистрации существующего пользователя")
     def test_register_existing_user(self):
         unique_email = f"test_user_{datetime.now().timestamp()}@test.com"
         registration_data = {
-        **RegistrationData.DEFAULT,
-        "email": unique_email
-    }
+            **RegistrationData.DEFAULT,
+            "email": unique_email
+        }
     
         ApiHelper.register_user(**registration_data)
         
@@ -83,6 +72,8 @@ class TestStellarBurgersAPI:
         assert response.status_code == 401
         assert response.json()["message"] == "email or password are incorrect"
 
+class TestOrderCreation:
+    
     @allure.title("Проверка создания заказа без авторизации")
     def test_create_order_without_auth(self):
         response = ApiHelper.create_order(ingredients=ApiConfig.VALID_INGREDIENTS)
